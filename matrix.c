@@ -12,9 +12,11 @@ typedef struct {
 	int color;
 	// geheimes Wort
 	int secret;
+	// aktueller Stand der Augabe
 	int secretcount;
 } column;
 
+// Array der Geheimnisse die per Zufall eingestreut werden
 const char geheimedinge[4][30]={
 	"Wake up Neo",
 	"The Matix has you",
@@ -37,9 +39,10 @@ int main(int argc, int** argv){
 		a[i].secretcount=0;
 	}
 	
-	// drei mögliche Textarten
+	// Ausgabe mit Farbe Betriebssystemabhängig
+	// drei mögliche Textarten grün, eine weiß
 	const char f [4][9] = {{"\e[1;32m"},{"\e[2;32m"},{"\e[3;32m"},{"\e[0m"}};
-	// Win grüne Ausgabe
+	// Windows grüne Ausgabe
 	// system("Color 02");
 
 	// Zufallszahlengenerator initialisieren
@@ -47,21 +50,21 @@ int main(int argc, int** argv){
 
 	// Endlosschleife
 	for(;;){
-		// zufällige Spalte wählen
+		// zufällige Spalte wählen um Strang zu ändern
 		int s = rand()%spalten;
-		// entsprechende Zeile, zufällige Farbe und Anzahl
+		// entsprechendes Zeichen, zufällige Farbe und Anzahl
 	 	a[s].count=rand()%30;
 		a[s].color=(rand()%3+3)%3;
 
-		// Geheimnis wählen
+		// Geheimnis wählen falls nicht schon gewählt
 		if (a[s].secret<0)
-			a[s].secret=rand()%260-(260-4);
+			a[s].secret=rand()%260-(260-4); // geringe Wahrscheinlichkeit
 
 		int i=0;
 		// Ausgabe jede Spalte
 		for(i=0;i<spalten;i++){
-			// Ausgabe mit Farbe Betriebssystemabhängig
-			// Ausgabe eines zufälligen (zwischen 32 und 126) Zeichens in entsprechender Farbe
+			// Auswahl eines zufälligen (zwischen 32 und 126) Zeichens, falls
+			// Strang aktiv, sonst Leerzeichen
 			char c=a[i].count>0?' '+((rand()%94+94)%94):' ';
 
 			// wenn Geheimnis gewählt und noch nicht fertig ausgegeben 
@@ -74,9 +77,9 @@ int main(int argc, int** argv){
 			}
 
 			// Ausgabe Farbe und Zeichen
-			// Geheimnis weiß
-			printf("%s%c",f[a[i].secret>=0?3:a[i].color],c); // Win Ausgabe ohne Farbstring
-			// Zähler der Spalte verringern
+			// falls Geheimnis, dann weiß
+			printf("%s%c",f[a[i].secret>=0?3:a[i].color],c); // bei Win Ausgabe ohne Farbstring
+			// Zähler der Spalte (Lebenszeit) verringern
 			a[i].count--;
 		}
 		// 100 Millisekunden warten	
