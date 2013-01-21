@@ -17,11 +17,15 @@ typedef struct {
 } column;
 
 // Array der Geheimnisse die per Zufall eingestreut werden
-const char geheimedinge[4][30]={
-	"Wake up Neo",
-	"The Matix has you",
+const char geheimedinge[8][30]={
+	"Wake up, Neo...",
+	"The Matix has you ...",
 	"Why is the Rum gone?",
-	"Knock knock, Neo!"
+	"Knock, knock, Neo.",
+	"Follow the white rabbit.",
+	"Trace program:running",
+	"Call trans opt: received.",
+	"WARNING: carrier anomaly"
 	};
 
 int main(int argc, int** argv){
@@ -58,7 +62,7 @@ int main(int argc, int** argv){
 
 		// Geheimnis wählen falls nicht schon gewählt
 		if (a[s].secret<0)
-			a[s].secret=rand()%260-(260-4); // geringe Wahrscheinlichkeit
+			a[s].secret=rand()%1000-(1000-8); // geringe Wahrscheinlichkeit
 
 		int i=0;
 		// Ausgabe jede Spalte
@@ -67,15 +71,27 @@ int main(int argc, int** argv){
 			// Strang aktiv, sonst Leerzeichen
 			char c=a[i].count>0?' '+((rand()%94+94)%94):' ';
 
-			// wenn Geheimnis gewählt und noch nicht fertig ausgegeben 
-			if (a[i].secret>=0 && a[i].secretcount<strlen(geheimedinge[a[i].secret])){
-				c=geheimedinge[a[i].secret][a[i].secretcount];
-				a[i].secretcount++;
+			// wahl des waagrechten Geheimnisses
+			int s=rand()%8;
+			// falls gewähltes Geheimnis noch in die Zeile passt UND wahrscheinlichkeit
+			if (i+strlen(geheimedinge[s])<spalten && rand()%5000==17){
+				// Farbe und Geheimnis ausgeben
+				printf("%s%s",f[1],geheimedinge[s]);
+				// Laufvariable um String Länge erhöhen
+				i+=strlen(geheimedinge[s])-1;
+				// Schleife von vorne beginnen
+				continue;
 			} else {
-				a[i].secret=-1;
-				a[i].secretcount=0;
+				// wenn Geheimnis gewählt und noch nicht fertig ausgegeben 
+				if (a[i].secret>=0 && a[i].secretcount<strlen(geheimedinge[a[i].secret])){
+					c=geheimedinge[a[i].secret][a[i].secretcount];
+					a[i].secretcount++;
+				} else {
+					a[i].secret=-1;
+					a[i].secretcount=0;
+				}
 			}
-
+			
 			// Ausgabe Farbe und Zeichen
 			// falls Geheimnis, dann weiß
 			printf("%s%c",f[a[i].secret>=0?3:a[i].color],c); // bei Win Ausgabe ohne Farbstring
@@ -83,7 +99,7 @@ int main(int argc, int** argv){
 			a[i].count--;
 		}
 		// 100 Millisekunden warten	
-		usleep(100000);
+		usleep(130000);
 		// Sleep(100); // Windows
 
 		printf("\n");
